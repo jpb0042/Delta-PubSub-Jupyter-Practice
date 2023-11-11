@@ -9,7 +9,7 @@ Mac: [Install instructions](https://docs.docker.com/desktop/install/mac-install/
 2. **GCP (Google Cloud Platform)**
 A GCP project and service account with a pub/sub topic is required for this notebook. The `.json` file associated with the service account is used to publish messages to pub/sub. 
 
-### Starting the project:
+### Running the container:
 
 1. Open a terminal (Powershell or equivalent) and clone the repo to a location of your choice.
 
