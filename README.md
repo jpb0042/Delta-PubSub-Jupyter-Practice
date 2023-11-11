@@ -19,7 +19,8 @@ A GCP project and service account with a pub/sub topic is required for this note
 
 3. ***Optional:*** edit the `ACCESS_TOKEN` in the `.env` file `delta-pubsub-jupyter-practice/.env`
 
-4. In the terminal, use the following command to start your container in detached mode using the `-d` flag. ```docker compose -f jupyter-local-spark-compose.yml up```
+4. In the terminal, use the following command to start your container in detached mode using the `-d` flag. 
+```docker compose -f jupyter-local-spark-compose.yml up```
 
 5. The container should now be running and viewable in your docker desktop app.
 
