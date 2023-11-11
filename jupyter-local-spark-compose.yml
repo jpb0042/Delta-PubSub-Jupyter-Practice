@@ -7,6 +7,3 @@ services:
     command: bash -c "jupyter notebook --port ${SPARK_PORT} --NotebookApp.token=${ACCESS_TOKEN}"
     tty: true
 
-# volumes:
-#   spark-notebooks:
-#     external: true
