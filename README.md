@@ -19,12 +19,14 @@ A GCP project and service account with a pub/sub topic is required for this note
 
 4. ***Optional:*** edit the `ACCESS_TOKEN` in the `.env` file `delta-pubsub-jupyter-practice/.env`
 
-5. In the terminal, use `docker compose -f jupyter-local-spark-compose.yml up` to start your container in detached mode using the `-d` flag.
+5. In the terminal, use `docker compose -f jupyter-local-spark-compose.yml up` to start your container.  Use the `-d` flag to start your container in detached mode.
 
 6. The container should now be running and viewable in your docker desktop app.
 
 7. Open [localhost:8889](http://localhost:8889/) in your browser and enter the `ACCESS_TOKEN` stored in the `.env` file to log in. 
 
-8. Open the `PracticeWriteRead.ipynb` file to run/edit the Jupyter notebook. The notebook needs to be run twice in to show that the messages have been recieved back from pub/sub. 
+8. Open the `PracticeWriteRead.ipynb` file to run/edit the Jupyter notebook. The notebook needs to be run twice in to show that the messages have been recieved back from pub/sub.
+
+9. Use `docker compose -f jupyter-local-spark-compose.yml down` to tear down your deployment when you are finished using it. 
 
 
