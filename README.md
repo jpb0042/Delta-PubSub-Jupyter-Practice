@@ -9,7 +9,7 @@ Mac: [Install instructions](https://docs.docker.com/desktop/install/mac-install/
 2. **GCP (Google Cloud Platform)**
 A GCP project and service account with a pub/sub topic is required for this notebook. The `.json` file associated with the service account is used to publish messages to pub/sub. 
 
-### Running the container:
+### Running the container
 
 1. Open a terminal (Powershell or equivalent) and clone the repo to a location of your choice.
 
@@ -29,4 +29,82 @@ A GCP project and service account with a pub/sub topic is required for this note
 
 9. Use `docker compose -f jupyter-local-spark-compose.yml down` to tear down your deployment when you are finished using it. 
 
+### About the notebook
+**Delta Lake:** Delta Lake is an open-source storage layer developed by Databricks that brings ACID (Atomicity, Consistency, Isolation, Durability) transactions to Apache Spark and big data workloads. It is designed to improve the reliability, performance, and scalability of big data processing and analytics. 
 
+The following lines of code create a data frame that will be used in the delta table:
+```python
+# Create a dataframe
+data = [(1, 'Alice', '555-555-5555'), (2, 'Bob', '123-456-7890'), (3, 'Charlie', '098-876-5432'), (4, 'Benny', '000-000-0000')]
+columns = ['id', 'name', 'phone']
+df = spark.createDataFrame(data, columns)
+```
+The following lines of code store the dataframe in a new delta table:
+```python
+# Desired location of delta table.
+delta_log_path = "desired/path"
+# Creates a folder in the specified location and writes the dataframe to a delta table within that folder
+df.write.format("delta").mode("overwrite").save(delta_log_path)
+```
+The following lines of code read the delta table and display its contents to the console:
+```python
+# Load the Delta table
+delta_table = DeltaTable.forPath(spark, "delta")
+
+# Read the data from the Delta table
+delta_data = delta_table.toDF()
+
+# Show the data to ensure the table was created properly
+delta_data.show()
+```
+**Pub/Sub:** Google Cloud Pub/Sub is a messaging service provided by Google Cloud Platform that enables the creation and management of real-time messaging between independent applications. It is a fully managed, scalable, and durable message queue service that allows you to send and receive messages between different components of a distributed system.
+
+The following lines of code are used to publish a message to pub/sub. Each message is a row of the delta table:
+```python
+# Create a Pub/Sub client
+publisher = pubsub_v1.PublisherClient()
+
+# Create a Topic path
+topic_path = publisher.topic_path(project_id, topic_name)
+
+# Load data from your Delta table into a DataFrame
+delta_log_path = "desired/path"  # Replace with the actual path to your Delta table
+
+#Read delta table
+delta_df = spark.read.format("delta").load(delta_log_path)
+
+# Convert the DataFrame to a list of dictionaries (each row as a dictionary)
+data_to_publish = delta_df.toJSON().collect()
+
+# Publish each record to Pub/Sub
+for record in data_to_publish:
+    # Convert the JSON record to bytes
+    message_data = json.dumps(record).encode("utf-8")
+
+    # Publish the message
+    publisher.publish(topic_path, data=message_data)
+
+    print(f"Published message: {record}")
+```
+The following lines of code are used to read messages back from pub/sub. The messages are acknowledged to remove them from the Pub/Sub message console in GCP.
+```python
+# Set the path to your service account key JSON file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/.json" # Replace with the path to your .json
+
+# Replace with your GCP project id and subscription name
+project_id = "your-project-id"
+subscription_name = "your-subscription-id"
+
+# Create a Pub/Sub subscriber client
+subscriber = pubsub_v1.SubscriberClient()
+
+# Create a subscription path
+subscription_path = subscriber.subscription_path(project_id, subscription_name)
+
+def callback(message):
+    print(f"Received message: {message.data}")
+    message.ack()  # Acknowledge the message to remove it from the subscription
+
+# Open the subscription to start receiving messages
+subscriber.subscribe(subscription_path, callback=callback)
+```
