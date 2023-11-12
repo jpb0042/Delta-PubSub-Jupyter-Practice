@@ -7,7 +7,7 @@ Windows: [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (W
 Mac: [Install instructions](https://docs.docker.com/desktop/install/mac-install/)
 
 2. **GCP (Google Cloud Platform)**
-A GCP project and service account with a pub/sub topic is required for this notebook. The `.json` file associated with the service account is used to publish messages to pub/sub. 
+A GCP project and service account with a pub/sub topic is required for this notebook. The `.json` file associated with the service account is used to read messages from pub/sub. 
 
 ### Running the container
 
